@@ -1,157 +1,221 @@
-// Full spec-compliant TodoMVC with localStorage persistence
-// and hash-based routing in ~120 effective lines of JavaScript.
+Vue.component("task", {
+    props: ["data", "index"],
+    template: `
+  <div class="task" v-bind:class="{ taskCompleted: data.checked}" >
+      <div class="contentText">
+          <div>
+              <button @click="$emit('task_done')" class="task_done taskButton">
+                  <span v-if="!data.checked" style="color: rgba(0,0,0,.28);"> ☐ </span>
+                  <span v-else style="color: #27ae60"> ☑ </span>
+              </button>
+              <span class="task_content" v-if="!data.editable">
+                  {{index}}. {{data.text}}
+              </span>
+              <span v-else>           
+                  {{index}}. <input @keyup.enter="$emit('save')" v-model="data.inputedit" autofocus class="edit-input"/>
+              </span>
+          </div>
+          <div class="button check" v-if="!data.editable">
+              <button @click="$emit('task_edit')" style="color: #eca81a;"> ✎️ </button>
+              <button @click="$emit('task_del')" style="color: #cd1537;"> ✕ </button>
+          </div>
+          <div v-else>
+              <button @click="$emit('save')"> 💾 </button>
+              <button @click="$emit('disable')"> ✕ </button>
+          </div>
+      </div>  
+  </div>
+  `
+});
 
-// localStorage persistence
-var STORAGE_KEY = 'todos-vuejs-2.0'
-var todoStorage = {
-    fetch: function () {
-        var todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-        todos.forEach(function (todo, index) {
-            todo.id = index
-        })
-        todoStorage.uid = todos.length
-        return todos
-    },
-    save: function (todos) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
-    }
-}
-
-// visibility filters
-var filters = {
-    all: function (todos) {
-        return todos
-    },
-    active: function (todos) {
-        return todos.filter(function (todo) {
-            return !todo.completed
-        })
-    },
-    completed: function (todos) {
-        return todos.filter(function (todo) {
-            return todo.completed
-        })
-    }
-}
-
-// app Vue instance
-var app = new Vue({
-    // app initial state
+let vue = new Vue({
+    el: '#app',
     data: {
-        todos: todoStorage.fetch(),
-        newTodo: '',
-        editedTodo: null,
-        visibility: 'all'
+        new_task: {
+            text: '',
+            editable: false,
+            checked: false
+        },
+        tasks: [
+        ],
+        login: '',
+        pass: '',
+        backendLanguage: 'JS',
+        apiURL: 'http://localhost:3005/api/',
+        apiVersion: 'v1',
+        step: ''
     },
-
-    // watch todos change for localStorage persistence
-    watch: {
-        todos: {
-            handler: function (todos) {
-                todoStorage.save(todos)
-            },
-            deep: true
-        }
-    },
-
-    // computed properties
-    // http://vuejs.org/guide/computed.html
     computed: {
-        filteredTodos: function () {
-            return filters[this.visibility](this.todos)
+        backendSuffix() {
+            return this.backendLanguage === 'PHP' ? '.php' : '';
         },
-        remaining: function () {
-            return filters.active(this.todos).length
-        },
-        allDone: {
-            get: function () {
-                return this.remaining === 0
-            },
-            set: function (value) {
-                this.todos.forEach(function (todo) {
-                    todo.completed = value
-                })
-            }
-        }
     },
-
-    filters: {
-        pluralize: function (n) {
-            return n === 1 ? 'item' : 'items'
-        }
-    },
-
-    // methods that implement data logic.
-    // note there's no DOM manipulation here at all.
     methods: {
-        addTodo: function () {
-            var value = this.newTodo && this.newTodo.trim()
-            if (!value) {
-                return
-            }
-            this.todos.push({
-                id: todoStorage.uid++,
-                title: value,
-                completed: false
+        getTasks: function () {
+            const route = this.apiVersion === 'v1' ? '/items' : '/router';
+            const qs = { action: this.apiVersion === 'v1' ? '' : 'getItems' };
+            fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
+                credentials: 'include',
+                method: this.apiVersion === 'v1' ? 'GET' : 'POST',
             })
-            this.newTodo = ''
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.error === 'forbidden') {
+                        this.step = 'login';
+                    } else {
+                        this.tasks = response.items.map((item) => {
+                            item.editable = false;
+                            return item;
+                        })
+                        this.step = 'items';
+                    }
+                }).catch((error) => {
+                    this.step = 'error';
+                })
         },
-
-        removeTodo: function (todo) {
-            this.todos.splice(this.todos.indexOf(todo), 1)
+        deleteTask: function (index) {
+            let request = JSON.stringify({ id: index, });
+            const route = this.apiVersion === 'v1' ? '/items' : '/router';
+            const qs = { action: this.apiVersion === 'v1' ? '' : 'deleteItem' };
+            fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
+                method: this.apiVersion === 'v1' ? 'DELETE' : 'POST',
+                body: request,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => res.json())
+                .then((response) => {
+                    if (response['ok'] === true) {
+                        this.getTasks()
+                    } else {
+                        alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                    }
+                });
         },
-
-        editTodo: function (todo) {
-            this.beforeEditCache = todo.title
-            this.editedTodo = todo
-        },
-
-        doneEdit: function (todo) {
-            if (!this.editedTodo) {
-                return
+        addTask: function () {
+            if (this.new_task.text.trim() !== '') {
+                let request = JSON.stringify({ text: this.new_task.text });
+                const route = this.apiVersion === 'v1' ? '/items' : '/router';
+                const qs = { action: this.apiVersion === 'v1' ? '' : 'createItem' };
+                fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
+                    method: this.apiVersion === 'v1' ? 'POST' : 'POST',
+                    body: request,
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(res => res.json())
+                    .then((response) => {
+                        if (response.id) {
+                            this.getTasks();
+                            this.$set(this.new_task, 'text', '');
+                        } else {
+                            alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                        }
+                    });
             }
-            this.editedTodo = null
-            todo.title = todo.title.trim()
-            if (!todo.title) {
-                this.removeTodo(todo)
+        },
+        updateTask: function (index, id) {
+            let request = JSON.stringify({ text: this.tasks[index].text, id: id, checked: this.tasks[index].checked });
+            const route = this.apiVersion === 'v1' ? '/items' : '/router';
+            const qs = { action: this.apiVersion === 'v1' ? '' : 'editItem' };
+            fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
+                method: this.apiVersion === 'v1' ? 'PUT' : 'POST',
+                body: request,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(res => res.json())
+                .then(() => {
+                    this.getTasks()
+                });
+        },
+        markAsDone(index, id) {
+            this.$set(this.tasks[index], 'checked', this.tasks[index].checked === false)
+            this.checked = this.tasks[index].checked;
+            this.updateTask(index, id)
+        },
+        editTask(index) {
+            this.$set(this.tasks[index], 'editable', true);
+            this.$set(this.tasks[index], 'inputedit', this.tasks[index].text);
+        },
+        save(index, id) {
+            if (this.new_task.text !== '' || this.new_task.text !== ' ') {
+                this.$set(this.tasks[index], 'text', this.tasks[index].inputedit);
+                this.updateTask(index, id);
+                this.$set(this.tasks[index], 'editable', false);
+
             }
         },
-
-        cancelEdit: function (todo) {
-            this.editedTodo = null
-            todo.title = this.beforeEditCache
+        disable(index) {
+            this.$set(this.tasks[index], 'editable', false);
+            this.$set(this.tasks[index], 'inputedit', '');
         },
-
-        removeCompleted: function () {
-            this.todos = filters.active(this.todos)
-        }
+        logout() {
+            const route = this.apiVersion === 'v1' ? '/logout' : '/router';
+            const qs = { action: this.apiVersion === 'v1' ? '' : 'logout' };
+            fetch(this.apiURL + this.apiVersion + route, {
+                method: this.apiVersion === 'v1' ? 'POST' : 'POST',
+                credentials: 'include',
+            }).then(res => res.json())
+                .then((response) => {
+                    if (response.ok) {
+                        localStorage.clear();
+                        this.step = 'login';
+                    }
+                });
+        },
+        logIn() {
+            if (this.login.trim() !== '' && this.pass.trim()) {
+                let params = JSON.stringify({ login: this.login, pass: this.pass });
+                const route = this.apiVersion === 'v1' ? '/login' : '/router';
+                const qs = { action: this.apiVersion === 'v1' ? '' : 'login' };
+                fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
+                    method: this.apiVersion === 'v1' ? 'POST' : 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: params
+                })
+                    .then(res => res.json())
+                    .then(response => {
+                        if (response.ok) {
+                            localStorage.setItem('name', this.login);
+                            this.getTasks();
+                            this.step = 'items';
+                        } else if (response.error === 'not found') {
+                            alert('Такая комбинация логина и пароля не найдена');
+                        } else {
+                            alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                        }
+                    })
+            }
+        },
+        register() {
+            if (this.login.trim() !== '' && this.pass.trim()) {
+                let params = JSON.stringify({ login: this.login, pass: this.pass });
+                const route = this.apiVersion === 'v1' ? '/register' : '/router';
+                const qs = { action: this.apiVersion === 'v1' ? '' : 'register' };
+                fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
+                    method: this.apiVersion === 'v1' ? 'POST' : 'POST',
+                    body: params,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(res => res.json())
+                    .then((response) => {
+                        if (response.ok) {
+                            this.logIn();
+                        } else {
+                            alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                        }
+                    });
+            }
+        },
     },
-
-    // a custom directive to wait for the DOM to be updated
-    // before focusing on the input field.
-    // http://vuejs.org/guide/custom-directive.html
-    directives: {
-        'todo-focus': function (el, binding) {
-            if (binding.value) {
-                el.focus()
-            }
-        }
-    }
-})
-
-// handle routing
-function onHashChange() {
-    var visibility = window.location.hash.replace(/#\/?/, '')
-    if (filters[visibility]) {
-        app.visibility = visibility
-    } else {
-        window.location.hash = ''
-        app.visibility = 'all'
-    }
-}
-
-window.addEventListener('hashchange', onHashChange)
-onHashChange()
-
-// mount
-app.$mount('.todoapp')
+});
