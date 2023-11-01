@@ -2,7 +2,7 @@
   "name": "task2.4",
   "version": "1.0.0",
   "description": "TODO web program",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rd /s /q dist && tsc",
     "start": "node dist/index.js"
