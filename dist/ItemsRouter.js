@@ -1,6 +1,6 @@
-const express = require('express');
+import express from "express";
+import { data } from "./data.js";
 const router = express.Router();
-const data = require('./data');
 router
     .route('/items')
     .get((req, res) => {
@@ -20,5 +20,4 @@ router
 })
     .delete((req, res) => {
 });
-module.exports = router;
-
+export { router };

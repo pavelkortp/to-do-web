@@ -1,4 +1,3 @@
-"use strict";
 let data = {
     "items": [
         { "id": 1, "text": "do homework", "checked": "false" },
@@ -8,4 +7,4 @@ let data = {
         { "id": 5, "text": "make breakfast", "checked": "false" },
     ]
 };
-module.exports = data;
+export { data };
