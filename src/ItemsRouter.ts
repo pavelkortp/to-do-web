@@ -29,11 +29,11 @@ router
         }
         task.checked = body.checked;
         task.text = body.text;
-        res.json({"ok": "true"});
+        res.json({"ok": true});
     })
     .delete((req: Request, res: Response) => {
         const body: { id: number } = req.body;
         data.items = data.items.filter((e: { id: number }) => e.id != body.id);
-        res.json({"ok": "true"});
+        res.json({"ok": true});
     });
 export {router};
