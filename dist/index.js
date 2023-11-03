@@ -1,10 +1,11 @@
+// import mongoose, { Schema, model, connect } from "mongoose";
 import express from "express";
 import { router } from "./ItemsRouter.js";
 import bodyParser from "body-parser";
-// import cors from "cors";
+import cors from "cors";
 const port = 3005;
 const app = express();
-// app.use(cors);
+app.options('*', cors());
 app.use(bodyParser.json());
 app.use(express.static('front'));
 app.use('/api/v1', router);

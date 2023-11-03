@@ -1,5 +1,5 @@
-import express from "express";
 import { data } from "./data.js";
+import express from "express";
 const router = express.Router();
 router
     .route('/items')
@@ -12,7 +12,7 @@ router
         .reduce((sum, cur) => {
         return sum + cur.id;
     }, 0);
-    task.checked = 'false';
+    task.checked = false;
     data.items.push(task);
     res.json({ "id": task.id });
 })

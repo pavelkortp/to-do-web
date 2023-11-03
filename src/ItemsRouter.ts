@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
-import express from "express";
 import {data} from "./data.js";
+import express from "express";
 
 const router = express.Router();
 router
@@ -9,19 +9,19 @@ router
         res.send(data);
     })
     .post((req: Request, res: Response) => {
-        const task: { id: number, text: string, checked: string } = req.body;
+        const task: { id: number, text: string, checked: boolean } = req.body;
 
         task.id = data.items
             .reduce((sum: number, cur: { id: number }) => {
                 return sum + cur.id;
             }, 0);
-        task.checked = 'false';
+        task.checked = false;
 
         data.items.push(task);
         res.json({"id": task.id});
     })
     .put((req: Request, res: Response) => {
-        const body: { id: number, text: string, checked: string } = req.body;
+        const body: { id: number, text: string, checked: boolean } = req.body;
         const task = data.items.find((e: { id: number }) => e.id == body.id);
         if (task == undefined) {
             res.status(500).send('task not found');
