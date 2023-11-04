@@ -36,8 +36,7 @@ let vue = new Vue({
             editable: false,
             checked: false
         },
-        tasks: [
-        ],
+        tasks: [],
         login: '',
         pass: '',
         backendLanguage: 'JS',
@@ -53,7 +52,7 @@ let vue = new Vue({
     methods: {
         getTasks: function () {
             const route = this.apiVersion === 'v1' ? '/items' : '/router';
-            const qs = { action: this.apiVersion === 'v1' ? '' : 'getItems' };
+            const qs = {action: this.apiVersion === 'v1' ? '' : 'getItems'};
             fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                 credentials: 'include',
                 method: this.apiVersion === 'v1' ? 'GET' : 'POST',
@@ -70,13 +69,13 @@ let vue = new Vue({
                         this.step = 'items';
                     }
                 }).catch((error) => {
-                    this.step = 'error';
-                })
+                this.step = 'error';
+            })
         },
         deleteTask: function (index) {
-            let request = JSON.stringify({ id: index, });
+            let request = JSON.stringify({id: index,});
             const route = this.apiVersion === 'v1' ? '/items' : '/router';
-            const qs = { action: this.apiVersion === 'v1' ? '' : 'deleteItem' };
+            const qs = {action: this.apiVersion === 'v1' ? '' : 'deleteItem'};
             fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                 method: this.apiVersion === 'v1' ? 'DELETE' : 'POST',
                 body: request,
@@ -95,9 +94,9 @@ let vue = new Vue({
         },
         addTask: function () {
             if (this.new_task.text.trim() !== '') {
-                let request = JSON.stringify({ text: this.new_task.text });
+                let request = JSON.stringify({text: this.new_task.text});
                 const route = this.apiVersion === 'v1' ? '/items' : '/router';
-                const qs = { action: this.apiVersion === 'v1' ? '' : 'createItem' };
+                const qs = {action: this.apiVersion === 'v1' ? '' : 'createItem'};
                 fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                     method: this.apiVersion === 'v1' ? 'POST' : 'POST',
                     body: request,
@@ -117,9 +116,9 @@ let vue = new Vue({
             }
         },
         updateTask: function (index, id) {
-            let request = JSON.stringify({ text: this.tasks[index].text, id: id, checked: this.tasks[index].checked });
+            let request = JSON.stringify({text: this.tasks[index].text, id: id, checked: this.tasks[index].checked});
             const route = this.apiVersion === 'v1' ? '/items' : '/router';
-            const qs = { action: this.apiVersion === 'v1' ? '' : 'editItem' };
+            const qs = {action: this.apiVersion === 'v1' ? '' : 'editItem'};
             fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                 method: this.apiVersion === 'v1' ? 'PUT' : 'POST',
                 body: request,
@@ -156,7 +155,7 @@ let vue = new Vue({
         },
         logout() {
             const route = this.apiVersion === 'v1' ? '/logout' : '/router';
-            const qs = { action: this.apiVersion === 'v1' ? '' : 'logout' };
+            const qs = {action: this.apiVersion === 'v1' ? '' : 'logout'};
             fetch(this.apiURL + this.apiVersion + route, {
                 method: this.apiVersion === 'v1' ? 'POST' : 'POST',
                 credentials: 'include',
@@ -170,9 +169,9 @@ let vue = new Vue({
         },
         logIn() {
             if (this.login.trim() !== '' && this.pass.trim()) {
-                let params = JSON.stringify({ login: this.login, pass: this.pass });
+                let params = JSON.stringify({login: this.login, pass: this.pass});
                 const route = this.apiVersion === 'v1' ? '/login' : '/router';
-                const qs = { action: this.apiVersion === 'v1' ? '' : 'login' };
+                const qs = {action: this.apiVersion === 'v1' ? '' : 'login'};
                 fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                     method: this.apiVersion === 'v1' ? 'POST' : 'POST',
                     credentials: 'include',
@@ -197,9 +196,9 @@ let vue = new Vue({
         },
         register() {
             if (this.login.trim() !== '' && this.pass.trim()) {
-                let params = JSON.stringify({ login: this.login, pass: this.pass });
+                let params = JSON.stringify({login: this.login, pass: this.pass});
                 const route = this.apiVersion === 'v1' ? '/register' : '/router';
-                const qs = { action: this.apiVersion === 'v1' ? '' : 'register' };
+                const qs = {action: this.apiVersion === 'v1' ? '' : 'register'};
                 fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                     method: this.apiVersion === 'v1' ? 'POST' : 'POST',
                     body: params,

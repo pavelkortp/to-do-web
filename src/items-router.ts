@@ -2,9 +2,9 @@ import {Request, Response} from "express";
 import {data} from "./data.js";
 import express from "express";
 
-const router = express.Router();
-router
-    .route('/items')
+const itemsRouter = express.Router();
+itemsRouter
+    .route('')
     .get((req: Request, res: Response) => {
         res.send(data);
     })
@@ -24,7 +24,7 @@ router
         const body: { id: number, text: string, checked: boolean } = req.body;
         const task = data.items.find((e: { id: number }) => e.id == body.id);
         if (task == undefined) {
-            res.status(500).send('task not found');
+            res.status(500).json({"error":"task not found"});
             return;
         }
         task.checked = body.checked;
@@ -36,4 +36,4 @@ router
         data.items = data.items.filter((e: { id: number }) => e.id != body.id);
         res.json({"ok": true});
     });
-export {router};
+export {itemsRouter};
