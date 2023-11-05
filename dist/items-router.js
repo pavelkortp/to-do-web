@@ -1,35 +1,37 @@
 import { data } from "./data.js";
 import express from "express";
+import { app } from "./index.js";
 const itemsRouter = express.Router();
-itemsRouter
-    .route('')
-    .get((req, res) => {
-    res.send(data);
-})
-    .post((req, res) => {
+app.post('/api/v1/items', (req, res) => {
+    var _a, _b;
+    const login = req.session.login;
+    console.log(login);
     const task = req.body;
-    task.id = data.items
-        .reduce((sum, cur) => {
+    task.id = ((_a = data
+        .users
+        .find((e) => e.login == login)) === null || _a === void 0 ? void 0 : _a.tasks.reduce((sum, cur) => {
         return sum + cur.id;
-    }, 0);
+    }, 0)) || 0;
     task.checked = false;
-    data.items.push(task);
+    (_b = data.users
+        .find((e) => e.login == login)) === null || _b === void 0 ? void 0 : _b.tasks.push(task);
     res.json({ "id": task.id });
-})
-    .put((req, res) => {
-    const body = req.body;
-    const task = data.items.find((e) => e.id == body.id);
-    if (task == undefined) {
-        res.status(500).json({ "error": "task not found" });
-        return;
-    }
-    task.checked = body.checked;
-    task.text = body.text;
-    res.json({ "ok": true });
-})
-    .delete((req, res) => {
-    const body = req.body;
-    data.items = data.items.filter((e) => e.id != body.id);
-    res.json({ "ok": true });
 });
+// .put((req: Request, res: Response) => {
+//     const login = req.session.login;
+//     const body: { id: number, text: string, checked: boolean } = req.body;
+//     const task = data.items.find((e: { id: number }) => e.id == body.id);
+//     if (task == undefined) {
+//         res.status(500).json({"error":"task not found"});
+//         return;
+//     }
+//     task.checked = body.checked;
+//     task.text = body.text;
+//     res.json({"ok": true});
+// })
+// .delete((req: Request, res: Response) => {
+//     const body: { id: number } = req.body;
+//     data.items = data.items.filter((e: { id: number }) => e.id != body.id);
+//     res.json({"ok": true});
+// });
 export { itemsRouter };
