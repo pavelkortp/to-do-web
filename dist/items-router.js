@@ -5,25 +5,47 @@ const itemsRouter = express.Router();
 itemsRouter
     .route('')
     .get((req, res) => {
-    var _a;
     const login = req.session.login;
-    res.send((_a = data
+    const pass = req.session.pass;
+    console.log({ login, pass });
+    if (login == undefined || pass == undefined) {
+        req.session.items = [];
+        res.send({ items: [] });
+        return;
+    }
+    const user = data
         .users
-        .find((e) => e.login == login)) === null || _a === void 0 ? void 0 : _a.tasks);
+        .find((e) => e.login == login && e.pass == pass);
+    if (user == undefined) {
+        res.status(400).json({ "error": `User with login: ${login} and pass: ${pass} not found` });
+        return;
+    }
+    res.send({ items: user.tasks });
 })
     .post((req, res) => {
-    var _a, _b;
     const login = req.session.login;
+    const pass = req.session.pass;
     const task = req.body;
-    task.id = ((_a = data
+    // if (login == undefined || pass == undefined) {
+    //     if(req.session.items!=undefined){
+    //         req.session.items.push({id:randomInt(100), text:task.text, checked: false});
+    //     }
+    //     res.send({items: []});
+    //     return;
+    // }
+    const user = data
         .users
-        .find((e) => e.login == login)) === null || _a === void 0 ? void 0 : _a.tasks.reduce((sum, cur) => {
+        .find((e) => e.login == login && e.pass == pass);
+    if (user == undefined) {
+        res.status(400).send({ "error": "User not found, check your data" });
+        return;
+    }
+    task.id = user.tasks
+        .reduce((sum, cur) => {
         return sum + cur.id;
-    }, 0)) || randomInt(10);
+    }, 0) || randomInt(10);
     task.checked = false;
-    (_b = data
-        .users
-        .find((e) => e.login == login)) === null || _b === void 0 ? void 0 : _b.tasks.push(task);
+    user.tasks.push(task);
     res.json({ "id": task.id });
 })
     .put((req, res) => {

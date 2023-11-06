@@ -8,37 +8,56 @@ itemsRouter
     .route('')
     .get((req: Request, res: Response) => {
         const login = req.session.login;
-        res.send(
-            data
-                .users
-                .find((e) => e.login == login)
-                ?.tasks
-        );
+        const pass = req.session.pass;
+        if (login == undefined || pass == undefined) {
+            req.session.items = [];
+            res.send({items: []});
+            return;
+        }
+        const user = data
+            .users
+            .find((e) => e.login == login && e.pass == pass);
+
+        if (user == undefined) {
+            res.status(400).json({"error": `User with login: ${login} and pass: ${pass} not found`});
+            return;
+        }
+        res.send({items: user.tasks});
     })
     .post((req: Request, res: Response) => {
         const login = req.session.login;
+        const pass = req.session.pass;
         const task: { id: number, text: string, checked: boolean } = req.body;
 
-        task.id = data
+        if (login == undefined || pass == undefined) {
+            if(req.session.items!=undefined){
+                req.session.items.push({"id":1, "text":'task.text', "checked": false});
+            }
+            res.send({items: []});
+            return;
+        }
+        const user = data
             .users
-            .find((e) => e.login == login)
-            ?.tasks
+            .find((e) => e.login == login && e.pass == pass);
+        if(user == undefined){
+            res.status(400).send({"error": "User not found, check your data"});
+            return;
+        }
+
+        task.id = user.tasks
             .reduce((sum: number, cur: { id: number }) => {
                 return sum + cur.id;
             }, 0) || randomInt(10);
-
         task.checked = false;
 
-        data
-            .users
-            .find((e) => e.login == login)
-            ?.tasks
-            .push(task);
+        user.tasks.push(task);
+
 
         res.json({"id": task.id});
     })
     .put((req: Request, res: Response) => {
         const login = req.session.login;
+
         const body: { id: number, text: string, checked: boolean } = req.body;
         const task = data
             .users

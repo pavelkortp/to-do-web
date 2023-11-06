@@ -5,11 +5,13 @@ import { itemsRouter } from "./items-router.js";
 import bodyParser from "body-parser";
 import sessionFileStore from 'session-file-store';
 import { data } from "./data.js";
+import cookieParser from 'cookie-parser';
 // import cors from "cors";
 const FileStore = sessionFileStore(session);
 const port = 3005;
 const app = express();
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(session({
     store: new FileStore({}),
     secret: 'keyboard cat',
@@ -47,11 +49,13 @@ app.post('/api/v1/register', (req, res) => {
 });
 app.post('/api/v1/login', (req, res) => {
     const user = req.body;
+    req.session.login = user.login;
+    req.session.pass = user.pass;
     if (data.users.find((e) => e.login == user.login && e.pass == user.pass)) {
         res.send({ "ok": "true" });
     }
     else {
-        res.status(400).send({ "error": "Login or password are incorrect" });
+        res.status(400).send({ "error": "User not found, check your data" });
     }
 });
 app.get('/', (req, res) => {
