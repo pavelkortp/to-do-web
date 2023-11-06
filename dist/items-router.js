@@ -7,10 +7,11 @@ itemsRouter
     .get((req, res) => {
     const login = req.session.login;
     const pass = req.session.pass;
-    console.log({ login, pass });
     if (login == undefined || pass == undefined) {
-        req.session.items = [];
-        res.send({ items: [] });
+        if (req.session.items == undefined) {
+            req.session.items = [];
+        }
+        res.send({ items: req.session.items });
         return;
     }
     const user = data
@@ -26,13 +27,15 @@ itemsRouter
     const login = req.session.login;
     const pass = req.session.pass;
     const task = req.body;
-    // if (login == undefined || pass == undefined) {
-    //     if(req.session.items!=undefined){
-    //         req.session.items.push({id:randomInt(100), text:task.text, checked: false});
-    //     }
-    //     res.send({items: []});
-    //     return;
-    // }
+    if (login == undefined || pass == undefined) {
+        if (req.session.items == undefined) {
+            req.session.items = [];
+        }
+        const anonTask = { "id": randomInt(100), "text": task.text, "checked": false };
+        req.session.items.push(anonTask);
+        res.json({ "id": anonTask.id });
+        return;
+    }
     const user = data
         .users
         .find((e) => e.login == login && e.pass == pass);
@@ -49,12 +52,30 @@ itemsRouter
     res.json({ "id": task.id });
 })
     .put((req, res) => {
-    var _a;
     const login = req.session.login;
+    const pass = req.session.pass;
     const body = req.body;
-    const task = (_a = data
+    if (login == undefined || pass == undefined) {
+        if (req.session.items == undefined) {
+            req.session.items = [];
+            res.json({ "ok": "false" });
+            return;
+        }
+        const anonTask = req.session.items
+            .find((e) => e.id == body.id);
+        res.json({ "ok": "true" });
+        return;
+    }
+    const user = data
         .users
-        .find((e) => e.login == login)) === null || _a === void 0 ? void 0 : _a.tasks.find((e) => e.id == body.id);
+        .find((e) => e.login == login && e.pass == pass);
+    if (user == undefined) {
+        res.status(400).send({ "error": "User not found, check your data" });
+        return;
+    }
+    const task = user
+        .tasks
+        .find((e) => e.id == body.id);
     if (task == undefined) {
         res.status(500).json({ "error": "task not found" });
         return;
@@ -65,10 +86,19 @@ itemsRouter
 })
     .delete((req, res) => {
     const login = req.session.login;
+    const pass = req.session.pass;
     const body = req.body;
+    if (login == undefined || pass == undefined) {
+        if (req.session.items == undefined) {
+            req.session.items = [];
+        }
+        req.session.items = req.session.items.filter((e) => e.id != body.id);
+        res.json({ "id": body.id });
+        return;
+    }
     const user = data
         .users
-        .find((e) => e.login == login);
+        .find((e) => e.login == login && e.pass == pass);
     if (user == undefined) {
         res.status(500).json({ "error": "User not found" });
         return;

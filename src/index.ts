@@ -22,7 +22,7 @@ declare module 'express-session' {
     interface SessionData {
         login: string,
         pass: string,
-        items: []
+        items:{}[]
     }
 }
 
