@@ -16,72 +16,73 @@ README:
 <html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="./style.css">
-  <link rel="shortcut icon" href="./img/favicon.png" type="image/x-icon">
-  <title>Задачник</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="shortcut icon" href="./img/favicon.png" type="image/x-icon">
+    <title>Задачник</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 
 <body>
-  <div id="app">
+<div id="app">
     <header class="header">
-      <h1 class="logo">Ш<span style="color: #27ae60">++</span></h1>
+        <h1 class="logo">Ш<span style="color: #27ae60">++</span></h1>
     </header>
     <main>
-      <div class="settings">
-        <h3>Настройки приложения:</h3>
-          <label>
-            Api URL:
-            <input type="text" v-model="apiURL">
-          </label>
-          <div>
-            На каком языке бекенд?
-            <button @click="backendLanguage='PHP'" :class="{'selected': backendLanguage === 'PHP'}">PHP</button>
-            <button @click="backendLanguage='JS'" :class="{'selected': backendLanguage === 'JS'}">JS</button>
-          </div>
-          <div>
-            Версия АПИ
-            <button @click="apiVersion='v1'" :class="{'selected': apiVersion === 'v1'}">v1</button>
-            <button @click="apiVersion='v2'" :class="{'selected': apiVersion === 'v2'}">v2</button>
-          </div>
-          <div>
-            <button @click="getTasks()" class="primary">Поехали</button>
-          </div>
-      </div>
-      <div class="wrapper login" v-if="step === 'login'">
-        <h3>Доступ к учетной записи</h3>
-          <div class="LoginInput">
-            <input v-model="login" type="text" placeholder="yaropolk@example.com" autofocus required>
-            <input v-model="pass" type="password" placeholder="******" autofocus required>
-          </div>
-          <div class="LoginButton">
-            <button @click="register">Зарегистрироваться</button>
-            <button @click="logIn" class="primary">Войти</button>
-          </div>
-      </div>
-      <div class="wrapper" v-else-if="step === 'items'">
-        <h3>Добавить новую задачу:</h3>
-        <label style="display: flex;">
-          <input @keyup.enter="addTask" class="new_todo" autofocus autocomplete="on" placeholder="выгулять кота соседа"
-            type="text" v-model="new_task.text">
-          <span><button @click="addTask" class="button new_todo_button">Добавить</button></span>
-        </label>
-        <h3 class="status_title">{{'Активные задачи: ' + tasks.length}}</h3>
-        <task @task_del="deleteTask(task.id)" @task_edit="editTask(index)" @task_done="markAsDone(index, task.id)"
-          @save="save(index, task.id)" @disable="disable(index)" :data="task" :index="index+1"
-          v-for="(task, index) in tasks" :key="index"></task>
+        <div class="settings">
+            <h3>Налаштування програми:</h3>
+            <label>
+                Api URL:
+                <input type="text" v-model="apiURL">
+            </label>
+            <div>
+                Якою мовою бекенд?
+                <button @click="backendLanguage='PHP'" :class="{'selected': backendLanguage === 'PHP'}">PHP</button>
+                <button @click="backendLanguage='JS'" :class="{'selected': backendLanguage === 'JS'}">JS</button>
+            </div>
+            <div>
+                Версія АПІ
+                <button @click="apiVersion='v1'" :class="{'selected': apiVersion === 'v1'}">v1</button>
+                <button @click="apiVersion='v2'" :class="{'selected': apiVersion === 'v2'}">v2</button>
+            </div>
+            <div>
+                <button @click="getTasks()" class="primary">Поїхали</button>
+            </div>
+        </div>
+        <div class="wrapper login" v-if="step === 'login'">
+            <h3>Доступ до облікового запису</h3>
+            <div class="LoginInput">
+                <input v-model="login" type="text" placeholder="yaropolk@example.com" autofocus required>
+                <input v-model="pass" type="password" placeholder="******" autofocus required>
+            </div>
+            <div class="LoginButton">
+                <button @click="register">Зареєструватися</button>
+                <button @click="logIn" class="primary">Увійти</button>
+            </div>
+        </div>
+        <div class="wrapper" v-else-if="step === 'items'">
+            <h3>Додати нове завдання:</h3>
+            <label style="display: flex;">
+                <input @keyup.enter="addTask" class="new_todo" autofocus autocomplete="on"
+                       placeholder="вигуляти кота сусіда"
+                       type="text" v-model="new_task.text">
+                <span><button @click="addTask" class="button new_todo_button">Додати</button></span>
+            </label>
+            <h3 class="status_title">{{'Активні завдання: ' + tasks.length}}</h3>
+            <task @task_del="deleteTask(task.id)" @task_edit="editTask(index)" @task_done="markAsDone(index, task.id)"
+                  @save="save(index, task.id)" @disable="disable(index)" :data="task" :index="index+1"
+                  v-for="(task, index) in tasks" :key="index"></task>
 
-        <hr>
-        <button @click="logout" class="logout">Выйти &#128682;</button>
-      </div>
-      <div class="wrapper" v-else-if="step === 'error'">
-        Произошла ошибка. Откройте консоль разработчика чтоб увидеть подробности.
-      </div>
+            <hr>
+            <button @click="logout" class="logout">Вийти &#128682;</button>
+        </div>
+        <div class="wrapper" v-else-if="step === 'error'">
+            Сталася помилка. Відкрийте консоль розробника щоб побачити подробиці.
+        </div>
 
     </main>
-  </div>
-  <script src="./scrypt.js">  </script>
+</div>
+<script src="./scrypt.js"></script>
 </body>
 
 </html>

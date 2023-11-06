@@ -10,7 +10,7 @@ let data = {
             ]
         },
         {
-            "login": "NEpavlo", "pass": 1234, "tasks": [
+            "login": "NEpavlo", "pass": "1234", "tasks": [
                 {"id": 1, "text": "do homework", "checked": false},
             ]
         }

@@ -1,16 +1,15 @@
 import {Request, Response, Express} from "express";
 // import mongoose, { Schema, model, connect } from "mongoose";
-import express from "express";
+import express from 'express';
 import session from 'express-session';
 import {itemsRouter} from "./items-router.js";
 import bodyParser from "body-parser";
 import sessionFileStore from 'session-file-store';
 import {data} from "./data.js";
 import cookieParser from 'cookie-parser';
-import {Item, UserModel} from "./user-model.js";
+
+
 // import cors from "cors";
-
-
 
 
 const FileStore = sessionFileStore(session);
@@ -22,7 +21,7 @@ declare module 'express-session' {
     interface SessionData {
         login: string,
         pass: string,
-        items:{}[]
+        items: Array<{ id: number, text: string, checked: boolean }>
     }
 }
 
@@ -52,7 +51,7 @@ app.post('/api/v1/logout', (req: Request, res: Response) => {
 });
 app.post('/api/v1/register', (req: Request, res: Response) => {
     const user: { login: string, pass: string } = req.body;
-    if(user.login == undefined || user.pass == undefined){
+    if (user.login == undefined || user.pass == undefined) {
         res.status(400).json({"error": "login or pass are undefined!"});
     }
     req.session.login = user.login;
