@@ -156,7 +156,7 @@ let vue = new Vue({
         logout() {
             const route = this.apiVersion === 'v1' ? '/logout' : '/router';
             const qs = {action: this.apiVersion === 'v1' ? '' : 'logout'};
-            fetch(this.apiURL + this.apiVersion + route, {
+            fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                 method: this.apiVersion === 'v1' ? 'POST' : 'POST',
                 credentials: 'include',
             }).then(res => res.json())

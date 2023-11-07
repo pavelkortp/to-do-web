@@ -1,9 +1,13 @@
 import {data} from "./data.js";
 
-export function getUser(login: string, pass: string):
-    { login: string, pass: string, tasks: Array<{ id: number, text: string, checked: boolean }> } | undefined {
+/**
+ * Search user in store by login and pass.
+ * @param login user's login.
+ * @param pass user's pass.
+ * @return Found user or undefined.
+ */
+export const getUser = async (login: string, pass: string) => {
     return data
         .users
         .find((e) => e.login == login && e.pass == pass);
 }
-
