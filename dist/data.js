@@ -1,7 +1,7 @@
 let data = {
     "users": [
         {
-            "login": "pavlo", "pass": "1234", "tasks": [
+            "login": "pavlo", "pass": "1234", "items": [
                 { "id": 1, "text": "do homework", "checked": false },
                 { "id": 2, "text": "clean the room", "checked": false },
                 { "id": 3, "text": "take a shower", "checked": false },
@@ -10,7 +10,7 @@ let data = {
             ]
         },
         {
-            "login": "NEpavlo", "pass": "1234", "tasks": [
+            "login": "NEpavlo", "pass": "1234", "items": [
                 { "id": 1, "text": "do homework", "checked": false },
             ]
         }

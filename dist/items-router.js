@@ -1,10 +1,9 @@
 import express from "express";
 import { createItem, deleteItem, editItem, getItems } from "./items-hendler.js";
-const itemsRouter = express.Router();
+export const itemsRouter = express.Router();
 itemsRouter
     .route('')
     .get(async (req, res) => await getItems(req, res))
     .post(async (req, res) => await createItem(req, res))
     .put(async (req, res) => await editItem(req, res))
     .delete(async (req, res) => await deleteItem(req, res));
-export { itemsRouter };

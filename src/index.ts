@@ -5,7 +5,7 @@ import session from 'express-session';
 import bodyParser from "body-parser";
 import sessionFileStore from 'session-file-store';
 import cookieParser from 'cookie-parser';
-import {setSessionIfExist} from "./no-auth-middleware";
+import {setSessionIfNotExist} from "./no-auth-middleware.js";
 // import cors from "cors";
 
 
@@ -17,15 +17,15 @@ export const app: Express = express();
 
 declare module 'express-session' {
     interface SessionData {
-        register: boolean;
+        registered: boolean;
         login: string,
         pass: string,
         items: Array<{ id: number, text: string, checked: boolean }>
     }
 }
 
+app.use(express.static('front'));
 app.use(bodyParser.json());
-app.use(setSessionIfExist);
 app.use(cookieParser());
 app.use(session({
     store: new FileStore({}),
@@ -36,17 +36,15 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
+app.use(setSessionIfNotExist);
 
 
-app.use(express.static('front'));
-
-
-app.get('/', async (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
     res.sendFile('index.html');
 });
 
 
 app.listen(port, () => {
     console.log(`server listen port: ${port}`);
-})
+});
 
