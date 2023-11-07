@@ -4,11 +4,12 @@ import session from 'express-session';
 import bodyParser from "body-parser";
 import sessionFileStore from 'session-file-store';
 import cookieParser from 'cookie-parser';
-import { setSessionIfExist } from "./no-auth-middleware.js";
+import { setSessionIfNotExist } from "./no-auth-middleware.js";
 // import cors from "cors";
+export const app = express();
 const FileStore = sessionFileStore(session);
 const port = 3005;
-export const app = express();
+app.use(express.static('front'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({
@@ -20,8 +21,7 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
-app.use(setSessionIfExist);
-app.use(express.static('front'));
+app.use(setSessionIfNotExist);
 app.get('/', (req, res) => {
     res.sendFile('index.html');
 });

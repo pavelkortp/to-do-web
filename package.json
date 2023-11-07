@@ -1,10 +1,11 @@
 {
+  "type": "module",
   "name": "task2.4",
   "version": "1.0.0",
   "description": "TODO web program",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": " rd /s /q dist && tsc",
     "start": "node dist/index.js",
     "bs": "npm run build && npm run start"
   },

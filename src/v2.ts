@@ -1,12 +1,10 @@
 import {Request, Response} from "express";
-import {app} from "./index";
+import {app} from "./index.js";
 import {login, logout, register} from "./auth-hendler.js";
 import {createItem, deleteItem, editItem, getItems} from "./items-hendler.js";
 
 
-
 app.post('/api/v2/router', async (req: Request, res: Response) => {
-    console.log('here')
     switch (req.query.action) {
         case 'login':
             await login(req, res);

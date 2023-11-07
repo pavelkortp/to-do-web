@@ -9,9 +9,9 @@ import {setSessionIfNotExist} from "./no-auth-middleware.js";
 // import cors from "cors";
 
 
+export const app: Express = express();
 const FileStore = sessionFileStore(session);
 const port: number = 3005;
-export const app: Express = express();
 
 // app.options('*', cors());
 

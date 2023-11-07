@@ -1,4 +1,4 @@
-let data = {
+export const data = {
     "users": [
         {
             "login": "pavlo", "pass": "1234", "items": [
@@ -16,4 +16,3 @@ let data = {
         }
     ]
 };
-export { data };
