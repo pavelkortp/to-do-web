@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {app} from "./index.js";
-import {login, logout, register} from "./auth-hendler.js";
-import {createItem, deleteItem, editItem, getItems} from "./items-hendler.js";
+import {login, logout, register} from "../hendlers/auth-hendler.js";
+import {createItem, deleteItem, editItem, getItems} from "../hendlers/items-hendler.js";
 
 
 app.post('/api/v2/router', async (req: Request, res: Response) => {

@@ -6,8 +6,10 @@
   "main": "dist/index.js",
   "scripts": {
     "build": " rd /s /q dist && tsc",
-    "start": "node dist/index.js",
-    "bs": "npm run build && npm run start"
+    "startV1": "node dist/src/v1.js",
+    "startV2": "node dist/src/v2.js",
+    "v1": "npm run build && npm run startV1",
+    "v2": "npm run build && npm run startV2"
   },
   "author": "Pavlo Zhurbytskyi",
   "license": "ISC",
@@ -25,6 +27,7 @@
     "express-session": "^1.17.3",
     "mongodb": "^6.2.0",
     "mongoose": "^8.0.0",
+    "node-fetch": "^3.3.2",
     "session-file-store": "^1.5.0"
   },
   "devDependencies": {

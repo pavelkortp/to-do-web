@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
-import {data} from "./data.js";
-import {getUser} from "./user-repository.js";
+import {addUserToFile, getUserFromFile, getUserFromObj} from "../src/user-repository.js";
 
 /**
  * Takes data from response body and creates new user.
@@ -9,18 +8,19 @@ import {getUser} from "./user-repository.js";
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
     const user: { login: string, pass: string } = req.body;
-    if (user.login == undefined || user.pass == undefined) {
+    if (!user.login || !user.pass) {
         res.status(400).json({'error': 'not found'});
         return;
     }
     req.session.registered = true;
     req.session.login = user.login;
     req.session.pass = user.pass;
-    data.users.push({
+    await addUserToFile({
+        registered: true,
         login: user.login,
         pass: user.pass,
         items: []
-    });
+    })
     res.send({'ok': true});
 };
 
@@ -36,7 +36,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     req.session.login = user.login;
     req.session.pass = user.pass;
 
-    if (await getUser(user.login, user.pass)) {
+    if (await getUserFromFile(user.login, user.pass)) {
+        req.session.items;
         res.json({'ok': true});
     } else {
         res.status(400).json({'error': 'not found'});

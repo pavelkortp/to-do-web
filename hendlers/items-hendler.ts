@@ -1,11 +1,12 @@
 import {Request, Response} from "express";
-import {getUser} from "./user-repository.js";
-import {randomInt} from "crypto";
-import {it} from "node:test";
+import {editItemFromFile, getUserFromFile} from "../src/user-repository.js";
+import {ItemModel} from "../models/ItemModel.js";
+
+
 
 /**
- *
- * @param req
+ * Returns all user tasks.
+ * @param req HTTP request
  * @param res
  */
 export const getItems = async (req: Request, res: Response): Promise<void> => {
@@ -15,8 +16,12 @@ export const getItems = async (req: Request, res: Response): Promise<void> => {
         return;
     }
     if (registered) {
-        const user = await getUser(login, pass);
-        res.json({items: user?.items});
+        try {
+            const user = await getUserFromFile(login, pass);
+            res.json({items: user?.items});
+        } catch (err) {
+            res.status(500).json({error: 'file not found'});
+        }
     } else {
         res.json({items: req.session.items})
     }
@@ -24,37 +29,28 @@ export const getItems = async (req: Request, res: Response): Promise<void> => {
 };
 
 /**
- *
- * @param req
- * @param res
+ * Creates new task and save it for current user.
+ * @param req HTTP request which contains JSON with "text".
+ * @param res HTTP response in JSON format which contains "id".
  */
 export const createItem = async (req: Request, res: Response): Promise<void> => {
     const {registered, login, pass, items} = req.session;
-    const task: { id: number, text: string, checked: false } = req.body;
+    const task: ItemModel = req.body;
 
     if (!login || !pass || !items) {
         res.status(400).json({'error': 'not found'});
         return;
     }
+    const randomId = await ItemModel.getRandomId();
     if (registered) {
-        const user = await getUser(login, pass);
-        if (!user) {
-            res.status(400).json({'error': 'not found'});
-            return;
-        }
-
-        task.id = user.items
-            .reduce((sum: number, cur: { id: number }) => {
-                return sum + cur.id;
-            }, 0) || randomInt(10);
-
+        const user = await getUserFromFile(login, pass);
+        task.id = randomId;
+        task.checked = false;
         user.items.push(task);
+        await editItemFromFile(user);
         res.json({'id': task.id});
     } else {
-        const id = items
-            .reduce((sum: number, cur: { id: number }) => {
-                return sum + cur.id;
-            }, 0) || randomInt(10);
+        const id = randomId;
         items.push({'id': id, 'text': task.text, 'checked': task.checked});
         res.json({'id': id});
     }
@@ -62,8 +58,8 @@ export const createItem = async (req: Request, res: Response): Promise<void> => 
 
 /**
  * Edit item in list or push it if item not exist in list.
- * @param req
- * @param res
+ * @param req HTTP request which contains JSON with "id", "text", "checked".
+ * @param res HTTP response in JSON format: "ok" or "error".
  */
 export const editItem = async (req: Request, res: Response): Promise<void> => {
     const {registered, login, pass, items} = req.session;
@@ -74,11 +70,7 @@ export const editItem = async (req: Request, res: Response): Promise<void> => {
         return;
     }
     if (registered) {
-        const user = await getUser(login, pass);
-        if (!user) {
-            res.status(400).json({'error': 'not found'});
-            return;
-        }
+        const user = await getUserFromFile(login, pass);
 
         const task = user
             .items
@@ -90,6 +82,7 @@ export const editItem = async (req: Request, res: Response): Promise<void> => {
         }
         task.checked = body.checked;
         task.text = body.text;
+        await editItemFromFile(user);
     } else {
         const anonTask = items
             .find((e: { id: number }) => e.id == body.id);
@@ -119,12 +112,13 @@ export const deleteItem = async (req: Request, res: Response): Promise<void> => 
     }
 
     if (registered) {
-        const user = await getUser(login, pass);
+        const user = await getUserFromFile(login, pass);
         if (!user) {
             res.status(400).json({'error': 'not found'});
             return;
         }
         user.items = user.items.filter((e: { id: number }) => e.id != body.id);
+        await editItemFromFile(user);
     } else {
         req.session.items = items.filter((e: { id: number }) => e.id != body.id);
     }
