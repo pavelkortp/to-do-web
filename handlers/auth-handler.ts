@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {addUserToFile, getUserFromFile, getUserFromObj} from "../src/user-repository.js";
+import {addUserToFile, getUserFromFile} from "../src/user-repository.js";
 
 /**
  * Takes data from response body and creates new user.

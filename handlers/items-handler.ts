@@ -3,11 +3,10 @@ import {editItemFromFile, getUserFromFile} from "../src/user-repository.js";
 import {ItemModel} from "../models/ItemModel.js";
 
 
-
 /**
  * Returns all user tasks.
  * @param req HTTP request
- * @param res
+ * @param res HTTP response in JSON format with all tasks.
  */
 export const getItems = async (req: Request, res: Response): Promise<void> => {
     const {registered, login, pass} = req.session;
