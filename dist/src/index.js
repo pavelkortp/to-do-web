@@ -6,10 +6,11 @@ import cookieParser from 'cookie-parser';
 import { setSessionIfNotExist } from "./no-auth-middleware.js";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { uri } from "../config.js";
-// import cors from "cors";
+import cors from "cors";
 export const app = express();
 const FileStore = sessionFileStore(session);
 const port = 3005;
+app.options('*', cors());
 export const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -39,9 +40,6 @@ app.use(session({
     }
 }));
 app.use(setSessionIfNotExist);
-app.get('/', (req, res) => {
-    res.sendFile('index.html');
-});
 app.listen(port, () => {
     console.log(`server listen port: ${port}`);
 });

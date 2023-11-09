@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import {setSessionIfNotExist} from "./no-auth-middleware.js";
 import {MongoClient, ServerApiVersion} from "mongodb";
 import {uri} from "../config.js";
-import {ItemModel} from "../models/ItemModel";
+import {ItemModel} from "../models/ItemModel.js";
 // import cors from "cors";
 
 
