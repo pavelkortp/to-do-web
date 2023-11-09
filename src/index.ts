@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import {setSessionIfNotExist} from "./no-auth-middleware.js";
 import {MongoClient, ServerApiVersion} from "mongodb";
 import {uri} from "../config.js";
+import {ItemModel} from "../models/ItemModel";
 // import cors from "cors";
 
 
@@ -22,7 +23,7 @@ declare module 'express-session' {
         registered: boolean;
         login: string,
         pass: string,
-        items: Array<{ id: number, text: string, checked: boolean }>
+        items: ItemModel[]
     }
 }
 

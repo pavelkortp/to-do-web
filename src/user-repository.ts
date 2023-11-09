@@ -1,8 +1,8 @@
 import {UserModel} from "../models/UserModel.js";
 import {client} from "./index.js";
 import {collection, db_name} from "../config.js";
-import {IUser} from "../models/IUser";
-import {WithId} from "mongodb";
+import {IUser} from "../models/IUser.js";
+
 
 const users = client.db(db_name).collection<IUser>(collection);
 

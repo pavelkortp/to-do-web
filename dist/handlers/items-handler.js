@@ -44,6 +44,7 @@ export const createItem = async (req, res) => {
         res.status(400).json({ 'error': 'not found' });
         return;
     }
+    console.log(task);
     if (registered) {
         const user = await getUser(login, pass);
         if (!user) {
@@ -52,9 +53,11 @@ export const createItem = async (req, res) => {
         }
         user.items.push(task);
         await updateUserItems(user);
+        req.session.items = user.items;
     }
     else {
         items.push(task);
+        req.session.items = items;
     }
     res.json({ 'id': task.id });
 };
@@ -91,7 +94,7 @@ export const editItem = async (req, res) => {
         const anonTask = items
             .find((e) => e.id == body.id);
         if (!anonTask) {
-            items.push(body);
+            items.push(new ItemModel(body.id, body.text, false));
             res.json({ 'ok': true });
             return;
         }
@@ -118,7 +121,9 @@ export const deleteItem = async (req, res) => {
             res.status(400).json({ 'error': 'not found' });
             return;
         }
+        console.log(body);
         user.items = user.items.filter((e) => e.id != body.id);
+        console.log(user.items);
         await updateUserItems(user);
     }
     else {
