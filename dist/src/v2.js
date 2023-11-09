@@ -1,10 +1,7 @@
-import {Request, Response} from "express";
-import {app} from "./index.js";
-import {login, logout, register} from "../handlers/auth-handler.js";
-import {createItem, deleteItem, editItem, getItems} from "../handlers/items-handler.js";
-
-
-app.post('/api/v2/router', async (req: Request, res: Response) => {
+import { app } from "./index.js";
+import { login, logout, register } from "../handlers/auth-handler.js";
+import { createItem, deleteItem, editItem, getItems } from "../handlers/items-handler.js";
+app.post('/api/v2/router', async (req, res) => {
     switch (req.query.action) {
         case 'login':
             await login(req, res);
@@ -28,8 +25,6 @@ app.post('/api/v2/router', async (req: Request, res: Response) => {
             await editItem(req, res);
             break;
         default:
-            res.status(400).json({'error': 'not found'});
+            res.status(400).json({ 'error': 'not found' });
     }
 });
-
-

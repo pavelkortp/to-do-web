@@ -1,6 +1,10 @@
 import {ItemModel} from "./ItemModel.js";
+import {IUser} from './IUser.js';
+import {login} from "../handlers/auth-handler";
+import {pass} from "../config";
+import {ObjectId} from "mongodb";
 
-export class UserModel {
+export class UserModel implements IUser {
     private _registered: boolean;
     private _login: string;
     private _pass: string;
@@ -13,27 +17,27 @@ export class UserModel {
         this._items = items;
     }
 
-    get registered(): boolean {
+    public get registered(): boolean {
         return this._registered;
     }
 
-    set registered(value: boolean) {
+    public set registered(value: boolean) {
         this._registered = value;
     }
 
-    get login(): string {
+    public get login(): string {
         return this._login;
     }
 
-    get pass(): string {
+    public get pass(): string {
         return this._pass;
     }
 
-    get items(): ItemModel[] {
+    public get items(): ItemModel[] {
         return this._items;
     }
 
-    set items(value: ItemModel[]) {
+    public set items(value: ItemModel[]) {
         this._items = value;
     }
 }
