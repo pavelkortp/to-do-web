@@ -9,14 +9,19 @@ import {setSessionIfNotExist} from "./no-auth-middleware.js";
 import {MongoClient, ServerApiVersion} from "mongodb";
 import {uri} from "../config.js";
 import {ItemModel} from "../models/ItemModel";
-// import cors from "cors";
+import cors from "cors";
 
 
 export const app: Express = express();
 const FileStore = sessionFileStore(session);
 const port: number = 3005;
 
-// app.options('*', cors());
+const corsOptions = {
+    origin: 'http://localhost:8080',
+    credentials: true
+}
+
+app.use(cors(corsOptions));
 
 declare module 'express-session' {
     interface SessionData {
@@ -57,12 +62,6 @@ app.use(session({
     }
 }));
 app.use(setSessionIfNotExist);
-
-
-app.get('/', (req: Request, res: Response) => {
-    res.sendFile('index.html');
-});
-
 
 app.listen(port, () => {
     console.log(`server listen port: ${port}`);

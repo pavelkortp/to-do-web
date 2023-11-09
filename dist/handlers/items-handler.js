@@ -44,7 +44,6 @@ export const createItem = async (req, res) => {
         res.status(400).json({ 'error': 'not found' });
         return;
     }
-    console.log(task);
     if (registered) {
         const user = await getUser(login, pass);
         if (!user) {
@@ -121,9 +120,7 @@ export const deleteItem = async (req, res) => {
             res.status(400).json({ 'error': 'not found' });
             return;
         }
-        console.log(body);
         user.items = user.items.filter((e) => e.id != body.id);
-        console.log(user.items);
         await updateUserItems(user);
     }
     else {
