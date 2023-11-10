@@ -10,7 +10,10 @@ import cors from "cors";
 export const app = express();
 const FileStore = sessionFileStore(session);
 const port = 3005;
-app.options('*', cors());
+app.use(cors({
+    origin: 'http://localhost:8080',
+    credentials: true
+}));
 export const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -40,6 +43,9 @@ app.use(session({
     }
 }));
 app.use(setSessionIfNotExist);
+app.get('/', (req, res) => {
+    res.sendFile('index.html');
+});
 app.listen(port, () => {
     console.log(`server listen port: ${port}`);
 });
