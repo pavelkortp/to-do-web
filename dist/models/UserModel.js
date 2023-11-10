@@ -1,3 +1,6 @@
+/**
+ * To-do list user implementation.
+ */
 export class UserModel {
     constructor(registered, login, pass, items) {
         this._registered = registered;
@@ -11,16 +14,16 @@ export class UserModel {
     set registered(value) {
         this._registered = value;
     }
-    get login() {
-        return this._login;
-    }
-    get pass() {
-        return this._pass;
-    }
     get items() {
         return this._items;
     }
     set items(value) {
         this._items = value;
+    }
+    get login() {
+        return this._login;
+    }
+    get pass() {
+        return this._pass;
     }
 }

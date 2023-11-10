@@ -1,13 +1,13 @@
 import {ItemModel} from "./ItemModel.js";
 import {IUser} from './IUser.js';
-import {login} from "../handlers/auth-handler";
-import {pass} from "../config";
-import {ObjectId} from "mongodb";
 
+/**
+ * To-do list user implementation.
+ */
 export class UserModel implements IUser {
     private _registered: boolean;
-    private _login: string;
-    private _pass: string;
+    private readonly _login: string;
+    private readonly _pass: string;
     private _items: ItemModel[];
 
     constructor(registered: boolean, login: string, pass: string, items: ItemModel[]) {
@@ -25,19 +25,19 @@ export class UserModel implements IUser {
         this._registered = value;
     }
 
-    public get login(): string {
-        return this._login;
-    }
-
-    public get pass(): string {
-        return this._pass;
-    }
-
     public get items(): ItemModel[] {
         return this._items;
     }
 
     public set items(value: ItemModel[]) {
         this._items = value;
+    }
+
+    public get login(): string {
+        return this._login;
+    }
+
+    public get pass(): string {
+        return this._pass;
     }
 }

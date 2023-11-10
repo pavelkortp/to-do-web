@@ -1,5 +1,9 @@
 var _a;
 import fetch from 'node-fetch';
+/**
+ * TO-DO list task model. Each task has
+ * a unique identifier, "text" - content, and "checked" - status.
+ */
 export class ItemModel {
     constructor(id, text, checked) {
         this.id = id;

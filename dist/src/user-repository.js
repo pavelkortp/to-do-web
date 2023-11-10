@@ -1,6 +1,6 @@
 import { client } from "./index.js";
-import { collection, db_name } from "../config.js";
-const users = client.db(db_name).collection(collection);
+import { collection_name, db_name } from "../config.js";
+const users = client.db(db_name).collection(collection_name);
 /**
  * Adds new user to db.
  * @param user new user.

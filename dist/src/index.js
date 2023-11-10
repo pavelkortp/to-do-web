@@ -30,7 +30,6 @@ export const client = new MongoClient(uri, {
         console.log(err);
     }
 })();
-app.use(express.static('front'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({
@@ -43,9 +42,6 @@ app.use(session({
     }
 }));
 app.use(setSessionIfNotExist);
-app.get('/', (req, res) => {
-    res.sendFile('index.html');
-});
 app.listen(port, () => {
     console.log(`server listen port: ${port}`);
 });
