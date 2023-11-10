@@ -1,6 +1,5 @@
 import { findTaskById, getUser, getUserFromSession, updateUserItems } from "../src/user-repository.js";
 import { ItemModel } from "../models/ItemModel.js";
-import { setSession } from "./auth-handler.js";
 /**
  * Creates new item from request body.
  * @param body HTTP request body in JSON format.
@@ -53,11 +52,11 @@ export const createItem = async (req, res) => {
         }
         user.items.push(task);
         await updateUserItems(user);
-        await setSession(req, { items: user.items });
+        req.session.items = user.items;
     }
     else {
         items.push(task);
-        await setSession(req, { items });
+        req.session.items = items;
     }
     res.json({ 'id': task.id });
 };

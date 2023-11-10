@@ -7,6 +7,8 @@ import {setSessionIfNotExist} from "./no-auth-middleware.js";
 import {ItemModel} from "../models/ItemModel.js";
 import cors from "cors";
 import {client} from "./user-repository.js";
+// import {MongoClient, ServerApiVersion} from "mongodb";
+// import {uri} from "../config.js";
 
 declare module 'express-session' {
     interface SessionData {
@@ -16,7 +18,7 @@ declare module 'express-session' {
         items: ItemModel[]
     }
 }
-
+export const app: Express = express();
 
 const FileStore = sessionFileStore(session);
 const port: number = 3005;
@@ -26,17 +28,25 @@ const corsOptions = {
     credentials: true
 };
 
+// export const client: MongoClient = new MongoClient(uri, {
+//     serverApi: {
+//         version: ServerApiVersion.v1,
+//         strict: true,
+//         deprecationErrors: true,
+//     }
+// });
+
 //Connect
 (async () => {
     try {
         await client.connect();
-        console.log('successful connect to db')
+        console.log('successful connect to db');
     } catch (err) {
         console.log(err);
     }
 })();
 
-export const app: Express = express();
+
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());

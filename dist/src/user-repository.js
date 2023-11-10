@@ -1,6 +1,7 @@
 import { UserModel } from "../models/UserModel.js";
 import { collection_name, db_name, uri } from "../config.js";
 import { MongoClient, ServerApiVersion } from "mongodb";
+// import {client} from "./application.js";
 export const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -49,7 +50,8 @@ export const updateUserItems = async (user) => {
  * @return user from session data.
  */
 export const getUserFromSession = async (req) => {
-    if (!req.session.registered ||
+    console.log(req.session);
+    if (req.session.registered == undefined ||
         !req.session.login ||
         !req.session.pass ||
         !req.session.items)

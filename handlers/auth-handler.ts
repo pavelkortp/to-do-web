@@ -14,7 +14,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         res.status(400).json({'error': 'not found'});
         return;
     }
-    await setSession(req);
+    await setSession(req, true);
     await addUser(new UserModel(true, user.login, user.pass, []));
     res.send({'ok': true});
 };
@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
     const user: { login: string, pass: string } = req.body;
     // Set session for user
-    await setSession(req);
+    await setSession(req, true);
 
     if (await getUser(user.login, user.pass)) {
         res.json({'ok': true});
@@ -56,22 +56,9 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
  * @param req HTTP request in JSON format
  * @param customData obj which contains fields which need to set.
  */
-export const setSession = async (req: Request, customData?: {
-    registered?: boolean,
-    login?: string,
-    pass?: string,
-    items?: ItemModel[]
-}): Promise<void> => {
-
-    if (!customData) {
-        req.session.registered = true;
-        req.session.login = req.body.login;
-        req.session.pass = req.body.pass;
-    } else {
-        req.session.registered = customData.registered || req.session.registered;
-        req.session.login = customData.login || req.session.login;
-        req.session.pass = customData.pass || req.session.pass;
-        req.session.items = customData.items || req.session.items;
-    }
-
+export const setSession = async (req: Request, registered = false): Promise<void> => {
+    req.session.registered = registered;
+    req.session.login = req.body.login || 'anon';
+    req.session.pass = req.body.pass || 'anon';
+    req.session.items = req.session.items || [];
 }

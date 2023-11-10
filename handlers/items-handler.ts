@@ -58,10 +58,10 @@ export const createItem = async (req: Request, res: Response): Promise<void> => 
         user.items.push(task);
 
         await updateUserItems(user);
-        await setSession(req, {items: user.items});
+        req.session.items = user.items;
     } else {
         items.push(task);
-        await setSession(req, {items});
+        req.session.items = items;
     }
     res.json({'id': task.id});
 }

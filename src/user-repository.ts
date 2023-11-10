@@ -4,6 +4,7 @@ import {IUser} from "../models/IUser.js";
 import {Collection, MongoClient, ServerApiVersion, WithId} from "mongodb";
 import {ItemModel} from "../models/ItemModel";
 import {Request} from "express";
+// import {client} from "./application.js";
 
 
 export const client = new MongoClient(uri, {
@@ -60,7 +61,8 @@ export const updateUserItems = async (user: IUser): Promise<void> => {
  * @return user from session data.
  */
 export const getUserFromSession = async (req: Request) => {
-    if (!req.session.registered ||
+    console.log(req.session);
+    if (req.session.registered == undefined ||
         !req.session.login ||
         !req.session.pass ||
         !req.session.items) throw new Error('session data not found');
