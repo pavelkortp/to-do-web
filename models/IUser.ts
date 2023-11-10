@@ -1,4 +1,4 @@
-import {ItemModel} from "./ItemModel";
+import {ItemModel} from "./ItemModel.js";
 
 /**
  * To-do list user. Each user can create account <br>

@@ -1,10 +1,10 @@
 import {UserModel} from "../models/UserModel.js";
 import {client} from "./index.js";
-import {collection, db_name} from "../config.js";
+import {collection_name, db_name} from "../config.js";
 import {IUser} from "../models/IUser.js";
 
 
-const users = client.db(db_name).collection<IUser>(collection);
+const users = client.db(db_name).collection<IUser>(collection_name);
 
 /**
  * Adds new user to db.

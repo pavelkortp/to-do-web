@@ -1,6 +1,4 @@
-import {Request, Response, Express} from "express";
-
-import express from 'express';
+import express, {Express} from "express";
 import session from 'express-session';
 import bodyParser from "body-parser";
 import sessionFileStore from 'session-file-store';
