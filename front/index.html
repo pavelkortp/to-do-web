@@ -29,26 +29,26 @@ README:
         <h1 class="logo">Ш<span style="color: #27ae60">++</span></h1>
     </header>
     <main>
-<!--        <div class="settings">-->
-<!--            <h3>Налаштування програми:</h3>-->
-<!--            <label>-->
-<!--                Api URL:-->
-<!--                <input type="text" v-model="apiURL">-->
-<!--            </label>-->
-<!--            <div>-->
-<!--                Якою мовою бекенд?-->
-<!--                <button @click="backendLanguage='PHP'" :class="{'selected': backendLanguage === 'PHP'}">PHP</button>-->
-<!--                <button @click="backendLanguage='JS'" :class="{'selected': backendLanguage === 'JS'}">JS</button>-->
-<!--            </div>-->
-<!--            <div>-->
-<!--                Версія АПІ-->
-<!--                <button @click="apiVersion='v1'" :class="{'selected': apiVersion === 'v1'}">v1</button>-->
-<!--                <button @click="apiVersion='v2'" :class="{'selected': apiVersion === 'v2'}">v2</button>-->
-<!--            </div>-->
-<!--            <div>-->
-<!--                <button @click="getTasks()" class="primary">Поїхали</button>-->
-<!--            </div>-->
-<!--        </div>-->
+        <!--        <div class="settings">-->
+        <!--            <h3>Налаштування програми:</h3>-->
+        <!--            <label>-->
+        <!--                Api URL:-->
+        <!--                <input type="text" v-model="apiURL">-->
+        <!--            </label>-->
+        <!--            <div>-->
+        <!--                Якою мовою бекенд?-->
+        <!--                <button @click="backendLanguage='PHP'" :class="{'selected': backendLanguage === 'PHP'}">PHP</button>-->
+        <!--                <button @click="backendLanguage='JS'" :class="{'selected': backendLanguage === 'JS'}">JS</button>-->
+        <!--            </div>-->
+        <!--            <div>-->
+        <!--                Версія АПІ-->
+        <!--                <button @click="apiVersion='v1'" :class="{'selected': apiVersion === 'v1'}">v1</button>-->
+        <!--                <button @click="apiVersion='v2'" :class="{'selected': apiVersion === 'v2'}">v2</button>-->
+        <!--            </div>-->
+        <!--            <div>-->
+        <!--                <button @click="getTasks()" class="primary">Поїхали</button>-->
+        <!--            </div>-->
+        <!--        </div>-->
         <div class="wrapper login" v-if="step === 'login'">
             <h3>Доступ до облікового запису</h3>
             <div class="LoginInput">
@@ -60,7 +60,7 @@ README:
                 <button @click="logIn" class="primary">Увійти</button>
             </div>
         </div>
-        <div class="wrapper"  v-else-if="step === 'items'">
+        <div class="wrapper" v-else-if="step === 'items'">
             <h3>Додати нове завдання:</h3>
             <label style="display: flex;">
                 <input @keyup.enter="addTask" class="new_todo" autofocus autocomplete="on"

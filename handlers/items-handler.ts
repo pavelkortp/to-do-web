@@ -18,14 +18,13 @@ const createTask = async (body: any) => {
  * @param res
  */
 export const getItems = async (req: Request, res: Response): Promise<void> => {
-    const {registered, login, pass} = req.session;
-    if (!login || !pass) {
+    const sessionUser = await getUserFromSession(req).catch(()=>{
         res.status(400).json({'error': 'not found'});
-        return;
-    }
-    if (registered) {
+    });
+
+    if (sessionUser?.registered) {
         try {
-            const user = await getUser(login, pass);
+            const user = await getUser(sessionUser.login, sessionUser.pass);
             res.json({items: user?.items});
         } catch (err) {
             res.status(500).json({error: 'file not found'});
@@ -42,15 +41,13 @@ export const getItems = async (req: Request, res: Response): Promise<void> => {
  * @param res HTTP response in JSON format which contains "id".
  */
 export const createItem = async (req: Request, res: Response): Promise<void> => {
-    const {registered, login, pass, items} = req.session;
+    const sessionUser = await getUserFromSession(req).catch(()=>{
+        res.status(400).json({'error': 'not found'});
+    });
     const task: ItemModel = await createTask(req.body);
 
-    if (!login || !pass || !items) {
-        res.status(400).json({'error': 'not found'});
-        return;
-    }
-    if (registered) {
-        const user = await getUser(login, pass);
+    if (sessionUser?.registered) {
+        const user = await getUser(sessionUser.login, sessionUser.pass);
         if (!user) {
             res.json({'error': 'not found'});
             return
@@ -60,8 +57,8 @@ export const createItem = async (req: Request, res: Response): Promise<void> => 
         await updateUserItems(user);
         req.session.items = user.items;
     } else {
-        items.push(task);
-        req.session.items = items;
+        sessionUser?.items.push(task);
+        req.session.items = sessionUser?.items;
     }
     res.json({'id': task.id});
 }

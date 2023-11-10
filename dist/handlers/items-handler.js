@@ -14,14 +14,12 @@ const createTask = async (body) => {
  * @param res
  */
 export const getItems = async (req, res) => {
-    const { registered, login, pass } = req.session;
-    if (!login || !pass) {
+    const sessionUser = await getUserFromSession(req).catch(() => {
         res.status(400).json({ 'error': 'not found' });
-        return;
-    }
-    if (registered) {
+    });
+    if (sessionUser === null || sessionUser === void 0 ? void 0 : sessionUser.registered) {
         try {
-            const user = await getUser(login, pass);
+            const user = await getUser(sessionUser.login, sessionUser.pass);
             res.json({ items: user === null || user === void 0 ? void 0 : user.items });
         }
         catch (err) {
@@ -38,14 +36,12 @@ export const getItems = async (req, res) => {
  * @param res HTTP response in JSON format which contains "id".
  */
 export const createItem = async (req, res) => {
-    const { registered, login, pass, items } = req.session;
-    const task = await createTask(req.body);
-    if (!login || !pass || !items) {
+    const sessionUser = await getUserFromSession(req).catch(() => {
         res.status(400).json({ 'error': 'not found' });
-        return;
-    }
-    if (registered) {
-        const user = await getUser(login, pass);
+    });
+    const task = await createTask(req.body);
+    if (sessionUser === null || sessionUser === void 0 ? void 0 : sessionUser.registered) {
+        const user = await getUser(sessionUser.login, sessionUser.pass);
         if (!user) {
             res.json({ 'error': 'not found' });
             return;
@@ -55,8 +51,8 @@ export const createItem = async (req, res) => {
         req.session.items = user.items;
     }
     else {
-        items.push(task);
-        req.session.items = items;
+        sessionUser === null || sessionUser === void 0 ? void 0 : sessionUser.items.push(task);
+        req.session.items = sessionUser === null || sessionUser === void 0 ? void 0 : sessionUser.items;
     }
     res.json({ 'id': task.id });
 };
