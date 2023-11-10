@@ -49,7 +49,6 @@ export const client = new MongoClient(uri, {
     }
 })();
 
-app.use(express.static('front'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({
@@ -62,11 +61,6 @@ app.use(session({
     }
 }));
 app.use(setSessionIfNotExist);
-
-
-app.get('/', (req: Request, res: Response) => {
-    res.sendFile('index.html');
-});
 
 
 app.listen(port, () => {
