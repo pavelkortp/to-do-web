@@ -1,8 +1,23 @@
 import fetch from 'node-fetch';
 
+/**
+ * TO-DO list task model. Each task has
+ * a unique identifier, "text" - content, and "checked" - status.
+ */
 export class ItemModel {
+    /**
+     * Unique id for task.
+     */
     public id: number;
+
+    /**
+     * Task text.
+     */
     public text: string;
+
+    /**
+     * Shows whether the task is completed or not.
+     */
     public checked: boolean;
 
     constructor(id: number, text: string, checked: boolean) {
@@ -10,7 +25,6 @@ export class ItemModel {
         this.text = text;
         this.checked = checked;
     }
-
 
     /**
      * Returns random id for item.

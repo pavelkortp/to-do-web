@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
-import {getUser, updateUserItems} from "../src/user-repository.js";
+import {findTaskById, getUser, getUserFromSession, updateUserItems} from "../src/user-repository.js";
 import {ItemModel} from "../models/ItemModel.js";
+import {setSession} from "./auth-handler.js";
 
 /**
  * Creates new item from request body.
@@ -57,10 +58,10 @@ export const createItem = async (req: Request, res: Response): Promise<void> => 
         user.items.push(task);
 
         await updateUserItems(user);
-        req.session.items = user.items;
+        await setSession(req, {items: user.items});
     } else {
         items.push(task);
-        req.session.items = items;
+        await setSession(req, {items});
     }
     res.json({'id': task.id});
 }
@@ -71,44 +72,23 @@ export const createItem = async (req: Request, res: Response): Promise<void> => 
  * @param res HTTP response in JSON format: "ok" or "error".
  */
 export const editItem = async (req: Request, res: Response): Promise<void> => {
-    const {registered, login, pass, items} = req.session;
+    const sessionUser = await getUserFromSession(req);
     const body: { id: number, text: string, checked: boolean } = req.body;
 
-    if (!login || !pass || !items) {
-        res.status(400).json({"error": `not found`});
+    const task: ItemModel | undefined = await findTaskById(body.id, sessionUser.items);
+
+    if (!task) {
+        sessionUser.items.push(new ItemModel(body.id, body.text, false));
+        res.json({'ok': true});
         return;
     }
+    task.checked = body.checked;
+    task.text = body.text;
 
-    if (registered) {
-        const user = await getUser(login, pass);
-        if (!user) {
-            res.json({'error': 'not found'});
-            return
-        }
-
-        const task = user
-            .items
-            .find((e: { id: number }) => e.id == body.id);
-
-        if (!task) {
-            res.status(500).json({'error': 'not found'});
-            return;
-        }
-        task.checked = body.checked;
-        task.text = body.text;
-
-        await updateUserItems(user);
-    } else {
-        const anonTask = items
-            .find((e: { id: number }) => e.id == body.id);
-        if (!anonTask) {
-            items.push(new ItemModel(body.id, body.text, false));
-            res.json({'ok': true});
-            return;
-        }
-        anonTask.checked = body.checked;
-        anonTask.text = body.text;
+    if (sessionUser.registered) {
+        await updateUserItems(sessionUser);
     }
+
     res.json({'ok': true});
 }
 
@@ -118,24 +98,19 @@ export const editItem = async (req: Request, res: Response): Promise<void> => {
  * @param res HTTP response in JSON format "ok" or "error".
  */
 export const deleteItem = async (req: Request, res: Response): Promise<void> => {
-    let {registered, login, pass, items} = req.session;
+    const sessionUser = await getUserFromSession(req);
     const body: { id: number } = req.body;
 
-    if (!login || !pass || !items) {
-        res.status(400).json({'error': 'not found'});
-        return;
-    }
-
-    if (registered) {
-        const user = await getUser(login, pass);
+    if (sessionUser.registered) {
+        const user = await getUser(sessionUser.login, sessionUser.pass);
         if (!user) {
             res.status(400).json({'error': 'not found'});
             return;
         }
-        user.items = user.items.filter((e:ItemModel) => e.id != body.id);
+        user.items = user.items.filter((e: ItemModel) => e.id != body.id);
         await updateUserItems(user);
     } else {
-        req.session.items = items.filter((e: ItemModel) => e.id != body.id);
+        req.session.items = sessionUser.items.filter((e: ItemModel) => e.id != body.id);
     }
     res.json({'ok': true});
 }

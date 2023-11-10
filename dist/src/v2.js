@@ -1,4 +1,4 @@
-import { app } from "./index.js";
+import { app } from "./application.js";
 import { login, logout, register } from "../handlers/auth-handler.js";
 import { createItem, deleteItem, editItem, getItems } from "../handlers/items-handler.js";
 app.post('/api/v2/router', async (req, res) => {

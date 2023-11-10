@@ -1,5 +1,5 @@
 import { itemsRouter } from "./items-router.js";
-import { app } from "./index.js";
+import { app } from "./application";
 import { addUser, getUser } from "./user-repository.js";
 import { UserModel } from "../models/UserModel.js";
 app.use('/api/v1/items', itemsRouter);

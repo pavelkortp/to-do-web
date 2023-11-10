@@ -1,6 +1,6 @@
 .idea
 node_modules
-.gitignore
 package-lock.json
 sessions
-config.ts
+./config.ts
+./dist/config.js

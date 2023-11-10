@@ -1,4 +1,6 @@
 import {Request, Response} from "express";
+import {setSession} from "../handlers/auth-handler.js";
+import {UserModel} from "../models/UserModel.js";
 
 /**
  * Set session for each HTTP request if it not exists
@@ -6,13 +8,9 @@ import {Request, Response} from "express";
  * @param res HTTP response.
  * @param next next Function
  */
-export const setSessionIfNotExist =  async (req: Request, res: Response, next: Function) => {
-    if (!req.session.login) {
-        req.session.login = 'anonymous';
-        req.session.pass = 'anonymous';
-        req.session.items = [];
-        req.session.registered = false;
+export const setSessionIfNotExist = async (req: Request, res: Response, next: Function): Promise<void> => {
+    if (!req.session) {
+        await setSession(req, new UserModel(false, 'anon', 'anon', []));
     }
     next();
-
 }
