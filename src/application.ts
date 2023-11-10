@@ -4,10 +4,9 @@ import bodyParser from "body-parser";
 import sessionFileStore from 'session-file-store';
 import cookieParser from 'cookie-parser';
 import {setSessionIfNotExist} from "./no-auth-middleware.js";
-import {MongoClient, ServerApiVersion} from "mongodb";
-import {uri} from "../config.js";
 import {ItemModel} from "../models/ItemModel.js";
 import cors from "cors";
+import {client} from "./user-repository.js";
 
 declare module 'express-session' {
     interface SessionData {
@@ -18,13 +17,6 @@ declare module 'express-session' {
     }
 }
 
-export const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
 
 const FileStore = sessionFileStore(session);
 const port: number = 3005;
@@ -48,7 +40,6 @@ export const app: Express = express();
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(setSessionIfNotExist);
 app.use(session({
     store: new FileStore({}),
     secret: 'keyboard cat',
@@ -58,6 +49,7 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
+app.use(setSessionIfNotExist);
 
 
 app.listen(port, () => {

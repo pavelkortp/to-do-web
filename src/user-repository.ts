@@ -1,9 +1,10 @@
 import {UserModel} from "../models/UserModel.js";
-import {collection, db_name, uri} from "../config.js";
+import {collection_name, db_name, uri} from "../config.js";
 import {IUser} from "../models/IUser.js";
 import {Collection, MongoClient, ServerApiVersion, WithId} from "mongodb";
 import {ItemModel} from "../models/ItemModel";
 import {Request} from "express";
+
 
 export const client = new MongoClient(uri, {
     serverApi: {
@@ -13,8 +14,9 @@ export const client = new MongoClient(uri, {
     }
 });
 
+
 // Users collection.
-const users: Collection<IUser> = client.db(db_name).collection<IUser>(collection);
+const users: Collection<IUser> = client.db(db_name).collection<IUser>(collection_name);
 
 /**
  * Adds new user to db.

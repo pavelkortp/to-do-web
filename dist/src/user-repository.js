@@ -1,5 +1,5 @@
 import { UserModel } from "../models/UserModel.js";
-import { collection, db_name, uri } from "../config.js";
+import { collection_name, db_name, uri } from "../config.js";
 import { MongoClient, ServerApiVersion } from "mongodb";
 export const client = new MongoClient(uri, {
     serverApi: {
@@ -9,7 +9,7 @@ export const client = new MongoClient(uri, {
     }
 });
 // Users collection.
-const users = client.db(db_name).collection(collection);
+const users = client.db(db_name).collection(collection_name);
 /**
  * Adds new user to db.
  * @param user new user.
