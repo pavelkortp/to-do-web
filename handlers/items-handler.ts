@@ -81,10 +81,10 @@ export const editItem = async (req: Request, res: Response): Promise<void> => {
     task.checked = body.checked;
     task.text = body.text;
     req.session.items = sessionUser.items;
+    console.log(req.session.items);
     if (sessionUser.registered) {
         await updateUserItems(sessionUser);
     }
-
     res.json({'ok': true});
 }
 

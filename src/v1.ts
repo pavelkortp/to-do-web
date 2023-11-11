@@ -19,22 +19,26 @@ app.post('/api/v1/logout', (req: Request, res: Response) => {
 });
 
 app.post('/api/v1/register', async (req: Request, res: Response) => {
-    const user: { login: string, pass: string } = req.body;
-    if (user.login == undefined || user.pass == undefined) {
-        res.status(400).json({'error': 'not found'});
+    const b: { login: string, pass: string } = req.body;
+    if (await getUser(b.login, b.pass)) {
+        res.status(400).json({'error': 'user with current login already exist'});
+        return;
     }
+    const user = new UserModel(true, b.login, b.pass, [])
     await setSession(req);
-    await addUser(new UserModel(true, user.login, user.pass, []));
+    await addUser(user);
     res.send({'ok': true});
 
 });
 
 app.post('/api/v1/login', async (req: Request, res: Response) => {
-    const user: { login: string, pass: string } = req.body;
-    await setSession(req);
-    if (await getUser(user.login, user.pass)) {
+    const b: { login: string, pass: string } = req.body;
+    const user = await getUser(b.login, b.pass);
+    if (user) {
+        await setSession(req, user);
         res.send({'ok': true});
     } else {
+        await setSession(req);
         res.status(400).send({'error': 'not found'});
     }
 });

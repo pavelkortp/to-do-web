@@ -28,7 +28,7 @@ app.post('/api/v2/router', async (req: Request, res: Response) => {
             await editItem(req, res);
             break;
         default:
-            res.status(400).json({'error': 'not found'});
+            res.status(400).json({'error': 'Bad request'});
     }
 });
 

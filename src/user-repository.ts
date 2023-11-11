@@ -1,9 +1,9 @@
-import {UserModel} from "../models/UserModel.js";
-import {collection_name, db_name, uri} from "../config.js";
-import {IUser} from "../models/IUser.js";
-import {Collection, MongoClient, ServerApiVersion, WithId} from "mongodb";
-import {ItemModel} from "../models/ItemModel";
-import {Request} from "express";
+import {UserModel} from '../models/UserModel.js';
+import {collection_name, db_name, uri} from '../config.js';
+import {IUser} from '../models/IUser.js';
+import {Collection, MongoClient, ServerApiVersion, WithId} from 'mongodb';
+import {ItemModel} from '../models/ItemModel';
+import {Request} from 'express';
 
 
 export const client = new MongoClient(uri, {
@@ -41,6 +41,10 @@ export const getUser = async (login: string, pass: string): Promise<WithId<IUser
     return await users.findOne({login, pass});
 }
 
+export const checkLogin = async (login: string): Promise<WithId<IUser> | null> => {
+    return await users.findOne({login});
+}
+
 /**
  * Update user tasks.
  * @param user exist user.
@@ -60,7 +64,6 @@ export const updateUserItems = async (user: IUser): Promise<void> => {
  * @return user from session data.
  */
 export const getUserFromSession = async (req: Request): Promise<UserModel> => {
-    console.log(req.session);
     if (req.session.registered == undefined ||
         !req.session.login ||
         !req.session.pass ||

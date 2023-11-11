@@ -1,6 +1,7 @@
-import {Request, Response} from "express";
-import {addUser, getUser} from "../src/user-repository.js";
-import {UserModel} from "../models/UserModel.js";
+import {Request, Response} from 'express';
+import {addUser, checkLogin, getUser} from '../src/user-repository.js';
+import {UserModel} from '../models/UserModel.js';
+import {IUser} from '../models/IUser.js';
 
 /**
  * Takes data from response body and creates new user.
@@ -9,12 +10,13 @@ import {UserModel} from "../models/UserModel.js";
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
     const user: { login: string, pass: string } = req.body;
-    if (!user.login || !user.pass) {
-        res.status(400).json({'error': 'not found'});
+    if (await checkLogin(user.login)) {
+        res.status(400).json({'error': 'user with current login already exist'});
         return;
     }
-    await setSession(req, true);
-    await addUser(new UserModel(true, user.login, user.pass, []));
+    const newUser = new UserModel(true, user.login, user.pass, []);
+    await setSession(req, newUser);
+    await addUser(newUser);
     res.send({'ok': true});
 };
 
@@ -25,11 +27,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
  * @param res HTTP response JSON (ok or error).
  */
 export const login = async (req: Request, res: Response): Promise<void> => {
-    const user: { login: string, pass: string } = req.body;
+    const b: { login: string, pass: string } = req.body;
     // Set session for user
-    await setSession(req, true);
-
-    if (await getUser(user.login, user.pass)) {
+    const user = await getUser(b.login, b.pass);
+    if (user) {
+        await setSession(req, user);
         res.json({'ok': true});
     } else {
         res.status(400).json({'error': 'not found'});
@@ -56,11 +58,11 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
 /**
  * Updates user data in session.
  * @param req HTTP request in JSON format.
- * @param registered marks user as registered in db.
+ * @param user from DataBase.
  */
-export const setSession = async (req: Request, registered = false): Promise<void> => {
-    req.session.registered = registered;
-    req.session.login = req.body.login || 'anon';
-    req.session.pass = req.body.pass || 'anon';
-    req.session.items = req.session.items || [];
+export const setSession = async (req: Request, user?: IUser): Promise<void> => {
+    req.session.registered = user?.registered || false;
+    req.session.login = user?.login || 'anon';
+    req.session.pass = user?.pass || 'anon';
+    req.session.items = user?.items || [];
 }
