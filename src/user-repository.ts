@@ -1,4 +1,4 @@
-import {readFile, writeFile} from "fs/promises";
+import {readFile, writeFile} from 'fs/promises';
 
 /**
  * Search user in JSON file by login and pass.
