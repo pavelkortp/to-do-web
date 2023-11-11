@@ -3,6 +3,7 @@ import {itemsRouter} from './items-router.js';
 import {app} from './application.js';
 import {addUser, getUser} from './user-repository.js';
 import {UserModel} from '../models/UserModel.js';
+import {setSession} from '../handlers/auth-handler.js';
 
 
 app.use('/api/v1/items', itemsRouter);
@@ -22,9 +23,7 @@ app.post('/api/v1/register', async (req: Request, res: Response) => {
     if (user.login == undefined || user.pass == undefined) {
         res.status(400).json({'error': 'not found'});
     }
-    req.session.registered = true;
-    req.session.login = user.login;
-    req.session.pass = user.pass;
+    await setSession(req);
     await addUser(new UserModel(true, user.login, user.pass, []));
     res.send({'ok': true});
 
@@ -32,9 +31,7 @@ app.post('/api/v1/register', async (req: Request, res: Response) => {
 
 app.post('/api/v1/login', async (req: Request, res: Response) => {
     const user: { login: string, pass: string } = req.body;
-    req.session.registered = true;
-    req.session.login = user.login;
-    req.session.pass = user.pass;
+    await setSession(req);
     if (await getUser(user.login, user.pass)) {
         res.send({'ok': true});
     } else {
