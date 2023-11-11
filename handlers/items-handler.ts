@@ -13,8 +13,8 @@ const createTask = async (body: any) => {
 
 /**
  * Returns all user tasks.
- * @param req HTTP request
- * @param res
+ * @param req HTTP request.
+ * @param res HTTP response which contains JSON with "items":[]
  */
 export const getItems = async (req: Request, res: Response): Promise<void> => {
     const {registered, login, pass} = req.session;
@@ -132,7 +132,7 @@ export const deleteItem = async (req: Request, res: Response): Promise<void> => 
             res.status(400).json({'error': 'not found'});
             return;
         }
-        user.items = user.items.filter((e:ItemModel) => e.id != body.id);
+        user.items = user.items.filter((e: ItemModel) => e.id != body.id);
         await updateUserItems(user);
     } else {
         req.session.items = items.filter((e: ItemModel) => e.id != body.id);
