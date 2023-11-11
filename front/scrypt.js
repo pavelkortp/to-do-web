@@ -43,7 +43,7 @@ let vue = new Vue({
         pass: '',
         backendLanguage: 'JS',
         apiURL: 'http://localhost:3005/api/',
-        apiVersion: 'v2',
+        apiVersion: 'v1',
         step: ''
     },
     computed: {
