@@ -1,6 +1,6 @@
-import {Request, Response} from "express";
-import {data} from "./data.js";
-import {getUser} from "./user-repository.js";
+import {Request, Response} from 'express';
+import {data} from "../src/data.js";
+import {getUser} from "../src/user-repository.js";
 
 /**
  * Takes data from response body and creates new user.

@@ -1,6 +1,5 @@
-import {Request, Response} from "express";
-import express from "express";
-import {createItem, deleteItem, editItem, getItems} from "./items-hendler.js";
+import express, {Request, Response} from 'express';
+import {createItem, deleteItem, editItem, getItems} from '../handlers/items-handler.js';
 
 export const itemsRouter = express.Router();
 itemsRouter

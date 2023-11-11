@@ -1,6 +1,6 @@
-import {Request, Response} from "express";
+import {Request, Response} from 'express';
 import {itemsRouter} from "./items-router.js";
-import {data} from "./data.js";
+import {data} from './data.js';
 import {app} from "./index.js";
 
 app.use('/api/v1/items', itemsRouter);

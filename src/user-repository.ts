@@ -1,4 +1,4 @@
-import {data} from "./data.js";
+import {data} from './data.js';
 
 /**
  * Search user in store by login and pass.

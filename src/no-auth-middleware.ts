@@ -1,4 +1,4 @@
-import {Request, Response} from "express";
+import {Request, Response} from 'express';
 
 /**
  * Set session for each HTTP request if it not exists

@@ -1,12 +1,11 @@
-import {Request, Response} from "express";
-import {getUser} from "./user-repository.js";
-import {randomInt} from "crypto";
-import {it} from "node:test";
+import {Request, Response} from 'express';
+import {getUser} from '../src/user-repository';
+import {randomInt} from 'crypto';
 
 /**
- *
- * @param req
- * @param res
+ * Send all user tasks.
+ * @param req HTTP request.
+ * @param res HTTP response which contains JSON with "items":[]
  */
 export const getItems = async (req: Request, res: Response): Promise<void> => {
     const {registered, login, pass} = req.session;
@@ -24,9 +23,10 @@ export const getItems = async (req: Request, res: Response): Promise<void> => {
 };
 
 /**
- *
- * @param req
- * @param res
+ * Creates new item and save it to session and to storage.
+ * @param req HTTP request which contains JSON with "text".
+ * @param res HTTP response with JSON with "id" - if task successfully adds <br>
+ * otherwise - "error".
  */
 export const createItem = async (req: Request, res: Response): Promise<void> => {
     const {registered, login, pass, items} = req.session;
@@ -62,8 +62,9 @@ export const createItem = async (req: Request, res: Response): Promise<void> => 
 
 /**
  * Edit item in list or push it if item not exist in list.
- * @param req
- * @param res
+ * @param req HTTP request, which contains JSON item {id, text, checked}
+ * @param res HTTP response in JSOn format with "ok" if task successfully changed <br>
+ * otherwise - "error".
  */
 export const editItem = async (req: Request, res: Response): Promise<void> => {
     const {registered, login, pass, items} = req.session;
