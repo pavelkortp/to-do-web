@@ -6,7 +6,6 @@ import {ItemModel} from "../models/ItemModel";
 import {Request} from "express";
 
 
-
 export const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -60,7 +59,7 @@ export const updateUserItems = async (user: IUser): Promise<void> => {
  * @param req HTTP request which contains data in cookie for creating user.
  * @return user from session data.
  */
-export const getUserFromSession = async (req: Request) => {
+export const getUserFromSession = async (req: Request): Promise<UserModel> => {
     console.log(req.session);
     if (req.session.registered == undefined ||
         !req.session.login ||

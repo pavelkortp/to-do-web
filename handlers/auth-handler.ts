@@ -1,7 +1,6 @@
 import {Request, Response} from "express";
 import {addUser, getUser} from "../src/user-repository.js";
 import {UserModel} from "../models/UserModel.js";
-import {ItemModel} from "../models/ItemModel";
 
 /**
  * Takes data from response body and creates new user.
@@ -18,6 +17,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     await addUser(new UserModel(true, user.login, user.pass, []));
     res.send({'ok': true});
 };
+
 
 /**
  * Takes data from response body and verify the user
@@ -36,6 +36,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+
 /**
  * Destroy user's session.
  * @param req HTTP request.
@@ -51,10 +52,11 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     });
 };
 
+
 /**
  * Updates user data in session.
- * @param req HTTP request in JSON format
- * @param customData obj which contains fields which need to set.
+ * @param req HTTP request in JSON format.
+ * @param registered marks user as registered in db.
  */
 export const setSession = async (req: Request, registered = false): Promise<void> => {
     req.session.registered = registered;

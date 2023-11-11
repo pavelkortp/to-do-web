@@ -1,12 +1,12 @@
-import express, {Express} from "express";
+import express, {Express} from 'express';
 import session from 'express-session';
-import bodyParser from "body-parser";
+import bodyParser from 'body-parser';
 import sessionFileStore from 'session-file-store';
 import cookieParser from 'cookie-parser';
-import {setSessionIfNotExist} from "./no-auth-middleware.js";
-import {ItemModel} from "../models/ItemModel.js";
-import cors from "cors";
-import {client} from "./user-repository.js";
+import {setSessionIfNotExist} from './no-auth-middleware.js';
+import {ItemModel} from '../models/ItemModel.js';
+import cors from 'cors';
+import {client} from './user-repository.js';
 
 
 declare module 'express-session' {
@@ -27,15 +27,8 @@ const corsOptions = {
     credentials: true
 };
 
-// export const client: MongoClient = new MongoClient(uri, {
-//     serverApi: {
-//         version: ServerApiVersion.v1,
-//         strict: true,
-//         deprecationErrors: true,
-//     }
-// });
 
-//Connect
+
 (async () => {
     try {
         await client.connect();

@@ -1,5 +1,5 @@
-import {Request, Response} from "express";
-import {setSession} from "../handlers/auth-handler.js";
+import {Request, Response} from 'express';
+import {setSession} from '../handlers/auth-handler.js';
 
 /**
  * Set session for each HTTP request if it not exists

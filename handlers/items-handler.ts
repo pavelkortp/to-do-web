@@ -1,13 +1,12 @@
-import {Request, Response} from "express";
-import {findTaskById, getUser, getUserFromSession, updateUserItems} from "../src/user-repository.js";
-import {ItemModel} from "../models/ItemModel.js";
-import {setSession} from "./auth-handler.js";
+import {Request, Response} from 'express';
+import {findTaskById, getUser, getUserFromSession, updateUserItems} from '../src/user-repository.js';
+import {ItemModel} from '../models/ItemModel.js';
 
 /**
  * Creates new item from request body.
  * @param body HTTP request body in JSON format.
  */
-const createTask = async (body: any) => {
+const createTask = async (body: any): Promise<ItemModel> => {
     const randomId = await ItemModel.getRandomId();
     return new ItemModel(randomId, body.text, false);
 }
@@ -18,7 +17,7 @@ const createTask = async (body: any) => {
  * @param res
  */
 export const getItems = async (req: Request, res: Response): Promise<void> => {
-    const sessionUser = await getUserFromSession(req).catch(()=>{
+    const sessionUser = await getUserFromSession(req).catch(() => {
         res.status(400).json({'error': 'not found'});
     });
 
@@ -41,7 +40,7 @@ export const getItems = async (req: Request, res: Response): Promise<void> => {
  * @param res HTTP response in JSON format which contains "id".
  */
 export const createItem = async (req: Request, res: Response): Promise<void> => {
-    const sessionUser = await getUserFromSession(req).catch(()=>{
+    const sessionUser = await getUserFromSession(req).catch(() => {
         res.status(400).json({'error': 'not found'});
     });
     const task: ItemModel = await createTask(req.body);
@@ -81,7 +80,7 @@ export const editItem = async (req: Request, res: Response): Promise<void> => {
     }
     task.checked = body.checked;
     task.text = body.text;
-
+    req.session.items = sessionUser.items;
     if (sessionUser.registered) {
         await updateUserItems(sessionUser);
     }
@@ -106,6 +105,7 @@ export const deleteItem = async (req: Request, res: Response): Promise<void> => 
         }
         user.items = user.items.filter((e: ItemModel) => e.id != body.id);
         await updateUserItems(user);
+        req.session.items = user.items;
     } else {
         req.session.items = sessionUser.items.filter((e: ItemModel) => e.id != body.id);
     }
