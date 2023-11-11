@@ -4,7 +4,7 @@ import {IUser} from "../models/IUser.js";
 import {Collection, MongoClient, ServerApiVersion, WithId} from "mongodb";
 import {ItemModel} from "../models/ItemModel";
 import {Request} from "express";
-// import {client} from "./application.js";
+
 
 
 export const client = new MongoClient(uri, {

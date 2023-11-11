@@ -7,8 +7,7 @@ import {setSessionIfNotExist} from "./no-auth-middleware.js";
 import {ItemModel} from "../models/ItemModel.js";
 import cors from "cors";
 import {client} from "./user-repository.js";
-// import {MongoClient, ServerApiVersion} from "mongodb";
-// import {uri} from "../config.js";
+
 
 declare module 'express-session' {
     interface SessionData {
