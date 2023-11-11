@@ -41,6 +41,10 @@ export const getUser = async (login: string, pass: string): Promise<WithId<IUser
     return await users.findOne({login, pass});
 }
 
+/**
+ * Checks if current login exists in DB.
+ * @param login user login.
+ */
 export const checkLogin = async (login: string): Promise<WithId<IUser> | null> => {
     return await users.findOne({login});
 }
