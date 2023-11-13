@@ -6,7 +6,7 @@ import {ItemModel} from '../models/ItemModel.js';
  * Creates new item from request body.
  * @param body HTTP request body in JSON format.
  */
-const createTask = async (body: any): Promise<ItemModel> => {
+const createTask = async (body: { text: string }): Promise<ItemModel> => {
     const randomId = await ItemModel.getRandomId();
     return new ItemModel(randomId, body.text, false);
 }
@@ -81,7 +81,6 @@ export const editItem = async (req: Request, res: Response): Promise<void> => {
     task.checked = body.checked;
     task.text = body.text;
     req.session.items = sessionUser.items;
-    console.log(req.session.items);
     if (sessionUser.registered) {
         await updateUserItems(sessionUser);
     }
